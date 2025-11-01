@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitor del Sistema</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 250px;
+            text-align: center;
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #007bff;
+            font-size: 20px;
+        }
+        .card p {
+            margin: 5px 0;
+        }
+        /* Estilos para los controles */
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .refresh-btn {
+            display: inline-block;
+            margin: 0 10px;
+            vertical-align: middle;
+            padding: 10px 20px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .refresh-btn:hover {
+            background: #0056b3;
+        }
+        .refresh-select {
+            padding: 10px;
+            border-radius: 5px;
+            vertical-align: middle;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Monitor del Sistema</h1>
+    <div class="controls">
+        <button id="refreshBtn" class="refresh-btn">Actualizar Manual</button>
+        <label for="autoRefresh" style="vertical-align: middle;">Auto-Refresco:</label>
+        <select id="autoRefresh" class="refresh-select" autocomplete="off">
+            <option value="0">Off</option>
+            <option value="3000" selected>3 seg</option>
+            <option value="5000">5 seg</option>
+            <option value="10000">10 seg</option>
+        </select>
+    </div>
+    <div class="container">
+        <div class="card" style="color: {% if cpu > 80 %}red{% elif cpu > 50 %}orange{% else %}green{% endif %};">
+            <h2>🖥️ CPU</h2>
+            <p>Uso: {{ cpu }}%</p>
+        </div>
+        <div class="card" style="color: {% if memory.percent > 80 %}red{% elif memory.percent > 50 %}orange{% else %}green{% endif %};">
+            <h2>💾 Memoria RAM</h2>
+            <p>Total: {{ memory.total }} GB</p>
+            <p>Usada: {{ memory.used }} GB</p>
+            <p>Porcentaje: {{ memory.percent }}%</p>
+        </div>
+        <div class="card">
+            <h2>📀 Disco Duro</h2>
+            <p>Total: {{ disk.total }} GB</p>
+            <p>Usado: {{ disk.used }} GB</p>
+            <p>Libre: {{ disk.free }} GB</p>
+            <p>Porcentaje: {{ disk.percent }}%</p>
+        </div>
+        <div class="card">
+            <h2>⚙️ Sistema</h2>
+            <p>OS: {{ system.os }}</p>
+            <p>Versión: {{ system.os_version }}</p>
+            <p>Núcleos físicos: {{ system.cpu_cores }}</p>
+            <p>Hilos lógicos: {{ system.cpu_threads }}</p>
+        </div>
+    </div>
+    <script>
+        // función update que será llamada
+        function update() {
+            location.reload();
+        }
+
+        // botón de refresco manual
+        document.getElementById('refreshBtn').addEventListener('click', update);
+
+        // para el auto-refresco
+        let timer = null;
+        const autoRefreshSelect = document.getElementById('autoRefresh');
+
+        function setAutoRefresh(ms) {
+            // Limpia cualquier temporizador existente
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            // Crea un nuevo temporizador si el tiempo es mayor a 0
+            if (ms > 0) {
+                timer = setInterval(update, ms);
+            }
+        }
+
+        // Listener para cuando cambia la selección
+        autoRefreshSelect.addEventListener('change', function() {
+            setAutoRefresh(parseInt(this.value));
+        });
+
+        // iniciar el refresco al cargar la página
+        window.addEventListener('load', function() {
+            const ms = parseInt(autoRefreshSelect.value);
+            setAutoRefresh(ms);
+        });
+    </script>
+</body>
+</html>
