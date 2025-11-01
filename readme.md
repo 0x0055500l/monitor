@@ -35,4 +35,4 @@ Instalación y ejecución (local, sin Docker)
 
 > [!NOTE]
 > Notas :
-> - Si tiene fallos al instalar el psutil
+> - Si tiene fallos al instalar el psutil Descarga el instalador Microsoft C++ Build Tools: https://visualstudio.microsoft.com/visual-cpp-build-tools/
