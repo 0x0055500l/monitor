@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from . import utils  # Importamos las funciones que creaste
+from . import utils
 
 def sistema_view(request):
     context = {
